@@ -1,0 +1,7 @@
+.sapUiSizeCompact .sapMListTblCell {
+	height: 1rem;
+}
+
+.sapMListTbl .sapMText, .sapMListTbl .sapMLabel {
+	font-size: 0.75rem;
+}

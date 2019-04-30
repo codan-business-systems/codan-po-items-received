@@ -1,0 +1,92 @@
+<mvc:View
+	class="sapUiSizeCompact" 
+	controllerName="codan.zpoitemsreceived.controller.Worklist"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	displayBlock="true" xmlns="sap.m">
+	<App id="idAppControl">
+		<pages>
+			<Page title="{i18n>title}" class="sapUiNoContentPadding">
+				<content>
+					<Table
+						id="worklist"
+						width="auto"
+						mode="MultiSelect"
+						selectionChange="onTableSelectionChange"
+						class="sapUiNoMargin"
+						items="{
+							path: '/ItemReceivedSet',
+							sorter: {
+								path: 'OrderNumber',
+								descending: false,
+								group: true
+							},
+							groupHeaderFactory: '.createGroupHeader',
+							parameters: {
+								operationMode: 'Client',
+								threshold: 500
+							}
+						}">
+		
+						<headerToolbar>
+							<Toolbar class="sapUiNoMargin">
+								<ToolbarSpacer/>
+								<SearchField
+									id="searchField"
+									class="sapUiNoMarginEnd"
+									search="onSearch"
+									width="auto">
+								</SearchField>
+							</Toolbar>
+						</headerToolbar>
+		
+						<columns>
+							<Column id="colDeliveryDocket">
+								<Text text="Delivery Docket"/>
+							</Column>
+							<Column id="colSupplier">
+								<Text text="Supplier"/>
+							</Column>
+							<Column id="colMaterial" width="15%">
+								<Text text="Material"/>
+							</Column>
+							<Column id="colQuantity" hAlign="Right">
+								<Text text="Quantity"/>
+							</Column>
+							<Column id="colCreatedBy">
+								<Text text="Entered By"/>
+							</Column>
+							<Column id="colCreatedDate">
+								<Text text="Entered On"/> 
+							</Column>
+						</columns>
+		
+						<items>
+							<ColumnListItem type="Navigation">
+								<cells>
+									<ObjectIdentifier title="{DeliveryDocket}"/>
+									<!--Use VBox and extra text over ObjectIdentifier text attribute as there is way-->
+									<!--too much space between title and text in the latter-->
+									<VBox>
+										<ObjectIdentifier title="{SupplierId}"/>
+										<Text text="{SupplierName}"/>
+									</VBox>
+									<VBox>
+										<ObjectIdentifier title="{PartNumber}"/>
+										<Text text="{Description}"/>
+									</VBox>
+									<ObjectNumber number="{QuantityReceived}" unit="{UnitOfMeasure}"/>
+									<ObjectIdentifier title="{CreatedByName}"/>
+									<Text text="{ path: 'CreatedDate', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd/MM/yyyy' } }"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+				<dependents>
+				</dependents>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>
