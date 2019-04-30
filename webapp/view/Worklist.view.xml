@@ -1,46 +1,25 @@
-<mvc:View
-	class="sapUiSizeCompact" 
-	controllerName="codan.zpoitemsreceived.controller.Worklist"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
-	xmlns:html="http://www.w3.org/1999/xhtml"
-	displayBlock="true" xmlns="sap.m">
+<mvc:View class="sapUiSizeCompact" controllerName="codan.zpoitemsreceived.controller.Worklist" xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" displayBlock="true" xmlns="sap.m">
 	<App id="idAppControl">
 		<pages>
 			<Page title="{i18n>title}" class="sapUiNoContentPadding">
 				<content>
-					<Table
-						id="worklist"
-						width="auto"
-						mode="MultiSelect"
-						selectionChange="onTableSelectionChange"
-						class="sapUiNoMargin"
-						items="{
-							path: '/ItemReceivedSet',
-							sorter: {
-								path: 'OrderNumber',
-								descending: false,
-								group: true
-							},
-							groupHeaderFactory: '.createGroupHeader',
-							parameters: {
-								operationMode: 'Client',
-								threshold: 500
-							}
-						}">
-		
+					<Table id="worklist" width="auto" mode="MultiSelect" selectionChange="onTableSelectionChange" class="sapUiNoMargin"
+						items="{ 
+							path: '/ItemReceivedSet', 
+							sorter:	{ path: 'OrderNumber', descending: false, group: true },
+							groupHeaderFactory: '.createGroupHeader', parameters: { operationMode: 'Client', threshold: 500 } }">
 						<headerToolbar>
 							<Toolbar class="sapUiNoMargin">
+								<!--Selected items toolbar controls - visible when rows selected -->
+								<Title visible="{= ${viewModel>/selectedCount} > 0 }" text="{viewModel>/selectedCount} docket(s) selected"/>
+								<Button visible="{= ${viewModel>/selectedCount} > 0 }" tooltip="{i18n>clearSelection}" press="clearSelections" icon="sap-icon://decline"/>
+								<Button visible="{= ${viewModel>/selectedCount} > 0 }" tooltip="{i18n>deleteSelected}" press="confirmDeleteSelectedItems" type="Reject"
+									icon="sap-icon://delete"/>
 								<ToolbarSpacer/>
-								<SearchField
-									id="searchField"
-									class="sapUiNoMarginEnd"
-									search="onSearch"
-									width="auto">
-								</SearchField>
+								<SearchField id="searchField" class="sapUiNoMarginEnd" search="onSearch" width="auto"></SearchField>
 							</Toolbar>
 						</headerToolbar>
-		
 						<columns>
 							<Column id="colDeliveryDocket">
 								<Text text="Delivery Docket"/>
@@ -58,12 +37,11 @@
 								<Text text="Entered By"/>
 							</Column>
 							<Column id="colCreatedDate">
-								<Text text="Entered On"/> 
+								<Text text="Entered On"/>
 							</Column>
 						</columns>
-		
 						<items>
-							<ColumnListItem type="Navigation">
+							<ColumnListItem type="Navigation" press="navToGoodsReceipt">
 								<cells>
 									<ObjectIdentifier title="{DeliveryDocket}"/>
 									<!--Use VBox and extra text over ObjectIdentifier text attribute as there is way-->
@@ -84,8 +62,7 @@
 						</items>
 					</Table>
 				</content>
-				<dependents>
-				</dependents>
+				<dependents></dependents>
 			</Page>
 		</pages>
 	</App>

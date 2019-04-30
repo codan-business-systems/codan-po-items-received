@@ -126,7 +126,7 @@
 		}
 	},
 	"sap.platform.abap": {
-		"uri": "/sap/bc/ui5_ui5/sap/z_po_items_received/webapp",
+		"uri": "/sap/bc/ui5_ui5/sap/zpoitems_rec/webapp",
 		"_version": "1.1.0"
 	}
 }
