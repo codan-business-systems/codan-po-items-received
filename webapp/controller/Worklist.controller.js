@@ -42,8 +42,8 @@ sap.ui.define([
 					action: "create"
 				},
 				params: {
-					"OrderNumber": oSourceObject.OrderNumber,
-					"DeliveryDocket": oSourceObject.DeliveryDocket
+					"purchaseOrder": oSourceObject.OrderNumber,
+					"deliveryDocket": oSourceObject.DeliveryDocket
 				}
 			})) || "";
 
