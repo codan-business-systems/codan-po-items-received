@@ -5,10 +5,7 @@
 			<Page title="{i18n>title}" class="sapUiNoContentPadding">
 				<content>
 					<Table id="worklist" width="auto" mode="MultiSelect" selectionChange="onTableSelectionChange" class="sapUiNoMargin"
-						items="{ 
-							path: '/ItemReceivedSet', 
-							sorter:	{ path: 'OrderNumber', descending: false, group: true },
-							groupHeaderFactory: '.createGroupHeader', parameters: { operationMode: 'Client', threshold: 500 } }">
+						items="{ path: '/ItemReceivedSet', sorter: { path: 'OrderNumber', descending: false, group: true }, groupHeaderFactory: '.createGroupHeader', parameters: { operationMode: 'Client', threshold: 500 } }">
 						<headerToolbar>
 							<Toolbar class="sapUiNoMargin">
 								<!--Selected items toolbar controls - visible when rows selected -->
@@ -21,19 +18,25 @@
 							</Toolbar>
 						</headerToolbar>
 						<columns>
+							<Column id="colItemNumber" width="5%">
+								<Text text="Item #"/>
+							</Column>
 							<Column id="colDeliveryDocket">
 								<Text text="Delivery Docket"/>
 							</Column>
-							<Column id="colSupplier">
+							<Column id="colSupplier" width="15%">
 								<Text text="Supplier"/>
 							</Column>
 							<Column id="colMaterial" width="15%">
 								<Text text="Material"/>
 							</Column>
-							<Column id="colQuantity" hAlign="Right">
+							<Column id="colFlags">
+								<Text text="Flags"/>
+							</Column>
+							<Column id="colQuantity" hAlign="Right" width="10%">
 								<Text text="Quantity"/>
 							</Column>
-							<Column id="colCreatedBy">
+							<Column id="colCreatedBy" width="15%">
 								<Text text="Entered By"/>
 							</Column>
 							<Column id="colCreatedDate">
@@ -43,6 +46,7 @@
 						<items>
 							<ColumnListItem type="Navigation" press="navToGoodsReceipt">
 								<cells>
+									<ObjectIdentifier title="{ItemNumber}"/>
 									<ObjectIdentifier title="{DeliveryDocket}"/>
 									<!--Use VBox and extra text over ObjectIdentifier text attribute as there is way-->
 									<!--too much space between title and text in the latter-->
@@ -54,6 +58,14 @@
 										<ObjectIdentifier title="{PartNumber}"/>
 										<Text text="{Description}"/>
 									</VBox>
+									<HBox>
+										<core:Icon color="{ path: 'InspectionRequired', formatter: '.formatters.flagIconColor' }" tooltip="Inspection required"
+											src="sap-icon://inspection"/>
+										<core:Icon class="sapUiTinyMarginBeginEnd" color="{ path: 'UrgentBoard', formatter: '.formatters.flagIconColor' }"
+											tooltip="Urgent board" src="sap-icon://activity-2"/>
+										<core:Icon color="{ path: 'SerialsRequired', formatter: '.formatters.flagIconColor' }" tooltip="Serials required"
+											src="sap-icon://number-sign"/>
+									</HBox>
 									<ObjectNumber number="{QuantityReceived}" unit="{UnitOfMeasure}"/>
 									<ObjectIdentifier title="{CreatedByName}"/>
 									<Text text="{ path: 'CreatedDate', type: 'sap.ui.model.type.Date', formatOptions: { pattern: 'dd/MM/yyyy' } }"/>

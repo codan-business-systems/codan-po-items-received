@@ -4,12 +4,13 @@ sap.ui.define([
 	"codan/zpoitemsreceived/model/utils",
 	"sap/m/GroupHeaderListItem",
 	"sap/m/MessageBox",
-	"sap/m/MessageToast"
-], function (Controller, JSONModel, utils, GHLI, MessageBox, MessageToast) {
+	"sap/m/MessageToast",
+	"codan/zpoitemsreceived/model/formatters"
+], function (Controller, JSONModel, utils, GHLI, MessageBox, MessageToast, formatters) {
 	"use strict";
 
 	return Controller.extend("codan.zpoitemsreceived.controller.Worklist", {
-		//formatters: formatters,
+		formatters,
 
 		onInit() {
 			// Get reference to ODataModel
