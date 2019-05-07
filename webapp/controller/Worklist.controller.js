@@ -5,8 +5,10 @@ sap.ui.define([
 	"sap/m/GroupHeaderListItem",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
-	"codan/zpoitemsreceived/model/formatters"
-], function (Controller, JSONModel, utils, GHLI, MessageBox, MessageToast, formatters) {
+	"codan/zpoitemsreceived/model/formatters",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator"
+], function (Controller, JSONModel, utils, GHLI, MessageBox, MessageToast, formatters, Filter, FilterOperator) {
 	"use strict";
 
 	return Controller.extend("codan.zpoitemsreceived.controller.Worklist", {
@@ -21,12 +23,47 @@ sap.ui.define([
 			this._oViewModel = new JSONModel({
 				busy: false,
 				selectedCount: 0,
-				totalItemCount: 0
+				totalItemCount: 0,
+				search: {
+					fields: [
+						{
+							property: "OrderNumber",
+							label: "Purchase Order",
+							searchSelected: true
+						},
+						{
+							property: "SupplierId",
+							label: "Supplier ID",
+							searchSelected: true
+						},
+						{
+							property: "SupplierName",
+							label: "Supplier Name",
+							searchSelected: true
+						},
+						{
+							property: "PartNumber",
+							label: "Material",
+							searchSelected: true
+						},
+						{
+							property: "Description",
+							label: "Material Desc",
+							searchSelected: true
+						},
+						{
+							property: "DeliveryDocket",
+							label: "Delivery Docket",
+							searchSelected: true
+						}
+					],
+					value: ""
+				}
 			});
 			this.getView().setModel(this._oViewModel, "viewModel");
 		},
 
-		createGroupHeader: function (oGroup) {
+		createGroupHeader(oGroup) {
 			return new GHLI({
 				title: oGroup.key,
 				upperCase: false
@@ -86,6 +123,42 @@ sap.ui.define([
 			this.onTableSelectionChange();			
 		},
 		
+		onSearch() {
+			this.clearSelections();
+
+			var aSearchFields = this._oViewModel.getProperty("/search/fields");
+			var sSearchValue = this._oViewModel.getProperty("/search/value");
+
+			// Build filters for each active search field
+			var aAllFilters = [];
+			if (sSearchValue) {
+				var aFieldFilters = aSearchFields
+					.filter(oSearchField => oSearchField.searchSelected)
+					.map(oSearchField => new Filter({
+						path: oSearchField.property,           
+						operator: FilterOperator.Contains,
+						value1: sSearchValue
+					}));
+
+				// If no field filters active, advise user that nothing will be selected
+				if (!aFieldFilters.length) {
+					MessageBox.warning("Nothing will be found because no search fields have been selected");
+				}
+
+				// Combine filters with OR statement not AND
+				var oCombinedFilter = new Filter({
+					filters: aFieldFilters,
+					and: false
+				});
+				aAllFilters.push(oCombinedFilter);
+			}
+
+			// Apply filter
+			var oTable = this._byId("worklist");
+			var oBinding = oTable.getBinding("items");
+			oBinding.filter(aAllFilters);
+		},
+		
 		confirmDeleteSelectedItems() {
 			var oTable = this._byId("worklist");
 			var aSelectedItems = oTable.getSelectedItems();
@@ -97,6 +170,15 @@ sap.ui.define([
 					}
 				}
 			});
+		},
+		
+		toggleSearchSettings(oEvent) {
+			var oPopover = this._byId("searchSettingsPopover");
+			if (oPopover.isOpen()) {
+				oPopover.close();
+			} else {
+				oPopover.openBy(oEvent.getSource());
+			}
 		},
 		
 		_deleteSelectedItems(aSelectedItems) {

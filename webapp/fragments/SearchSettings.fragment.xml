@@ -1,0 +1,20 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
+	<ResponsivePopover
+		id="searchSettingsPopover"
+		placement="Bottom"
+		showHeader="false">
+		<content>
+			<List id="searchSettingsList" items="{viewModel>/search/fields}">
+				<items>
+					<CustomListItem
+						type="Inactive">
+						<CheckBox class="sapUiSmallMarginEnd"
+							text="{viewModel>label}"
+							selected="{viewModel>searchSelected}"
+							select="onSearch"/>
+					</CustomListItem>
+				</items>
+			</List>
+		</content>
+	</ResponsivePopover>
+</core:FragmentDefinition>

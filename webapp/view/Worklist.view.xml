@@ -14,7 +14,8 @@
 								<Button visible="{= ${viewModel>/selectedCount} > 0 }" tooltip="{i18n>deleteSelected}" press="confirmDeleteSelectedItems" type="Reject"
 									icon="sap-icon://delete"/>
 								<ToolbarSpacer/>
-								<SearchField id="searchField" class="sapUiNoMarginEnd" search="onSearch" width="auto"></SearchField>
+								<SearchField id="searchField" class="sapUiNoMarginEnd" search="onSearch" width="auto" value="{viewModel>/search/value}"/>
+								<Button class="sapUiNoMarginBegin" type="Emphasized" icon="sap-icon://drop-down-list" tooltip="Search Settings" press="toggleSearchSettings"/>
 							</Toolbar>
 						</headerToolbar>
 						<columns>
@@ -74,7 +75,9 @@
 						</items>
 					</Table>
 				</content>
-				<dependents></dependents>
+				<dependents>
+					<core:Fragment fragmentName="codan.zpoitemsreceived.fragments.SearchSettings" type="XML"/>
+				</dependents>
 			</Page>
 		</pages>
 	</App>
