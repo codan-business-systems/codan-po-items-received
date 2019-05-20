@@ -1,0 +1,64 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns:l="sap.ui.layout">
+	<Dialog 
+		id="changeDeliveryDocketDialog"
+		busy="{viewModel>/busy}"
+		busyIndicatorDelay="1000"
+		title="Change Delivery Docket"
+		width="35em">
+		<content>
+		<form:Form
+			id="changeDeliveryDocketForm"
+			editable="true"
+			width="100%"
+			class="editableForm">
+			<form:layout>
+				<form:ResponsiveGridLayout
+					labelSpanL="4"
+					labelSpanM="4"
+					emptySpanL="0"
+					emptySpanM="0"
+					columnsL="1"
+					columnsM="1"/>
+			</form:layout>
+
+				<form:formContainers>
+					<form:FormContainer>
+						<form:formElements>
+							<form:FormElement
+								label="Purchase Order">
+								<form:fields>
+									<ObjectIdentifier title="{OrderNumber}"/>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement
+								label="Original Delivery Docket">
+								<form:fields>
+									<ObjectIdentifier title="{DeliveryDocket}"/>
+								</form:fields>
+							</form:FormElement>
+							<form:FormElement
+								label="New Delivery Docket">
+								<Input
+										type="Text"
+										value="{viewModel>/changeDelivery/newDeliveryDocket}"
+										valueState="{= !${viewModel>/changeDelivery/newDeliveryDocket} ? 'Error' : 'None' }"
+										valueStateText="Enter a delivery docket"
+										liveChange="forceNewDeliveryDocketUpperCase"
+										valueLiveUpdate="false"/>
+							</form:FormElement>
+						</form:formElements>
+					</form:FormContainer>
+				</form:formContainers>
+		</form:Form>
+		</content>
+		<buttons>
+			<Button
+				press="closeChangeDeliveryDocketDialog"
+				text="Cancel"/>
+			<Button
+				type="Accept"
+				press="changeDeliveryDocket"
+				text="Save"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

@@ -58,6 +58,11 @@ sap.ui.define([
 						}
 					],
 					value: ""
+				},
+				changeDelivery: {
+					purchaseOrder: "",
+					oldDeliveryDocket: "",
+					newDeliveryDocket: ""
 				}
 			});
 			this.getView().setModel(this._oViewModel, "viewModel");
@@ -258,6 +263,68 @@ sap.ui.define([
 		
 		_setBusy(bBusy) {
 			this._oViewModel.setProperty("/busy", bBusy);
+		},
+		
+		openChangeDeliveryDocketDialog() {
+			
+			var oSelectedTableItem = this._byId("worklist").getSelectedItems()[0],	//Button only visible if exactly 1 row is selected
+				oItem	 = oSelectedTableItem.getBindingContext().getObject(),
+				sItemPath = `/GoodsReceiptSet('${oItem.ProcessingId}')`;
+			
+			// Initialise the data
+			this._oViewModel.setProperty("/changeDelivery", {
+					purchaseOrder: oItem.OrderNumber,
+					oldDeliveryDocket: oItem.DeliveryDocket,
+					newDeliveryDocket: "",
+					itemPath: sItemPath
+			});
+			
+			// Create the dialog
+			if (!this._oChangeDeliveryDocketDialog) {
+				this._oChangeDeliveryDocketDialog = sap.ui.xmlfragment("codan.zpoitemsreceived.fragments.ChangeDeliveryDocket", this);
+				this.getView().addDependent(this._oChangeDeliveryDocketDialog);
+			}
+			
+			// Bind the dialog to the selected row
+			this._oChangeDeliveryDocketDialog.bindElement(sItemPath); 
+			
+			this._oChangeDeliveryDocketDialog.open();
+			
+		},
+		
+		closeChangeDeliveryDocketDialog() {
+			if (this._oChangeDeliveryDocketDialog) {
+				this._oChangeDeliveryDocketDialog.close();
+			}
+		},
+		
+		changeDeliveryDocket() {
+			var oChange = this._oViewModel.getProperty("/changeDelivery"),
+				that = this;
+			
+			if (!oChange.newDeliveryDocket) {
+				MessageBox.error("Enter a docket number before saving");
+				return;
+			}
+			
+			this._setBusy(true);
+			
+			this._oODataModel.setProperty(oChange.itemPath + "/DeliveryDocket", oChange.newDeliveryDocket);
+			this._oODataModel.submitChanges({
+				success: (oData) => {
+					if (!this._handleBatchResponseAndReturnErrorFlag(oData)) {
+						this._byId("worklist").getBinding("items").refresh();
+						that.closeChangeDeliveryDocketDialog();
+						this._setBusy(false);
+						MessageToast.show("Delivery docket updated");
+					}
+				},
+				error: this._handleSimpleODataError.bind(this)
+			});
+		},
+		
+		forceNewDeliveryDocketUpperCase(oEvent) {
+			this._oViewModel.setProperty("/changeDelivery/newDeliveryDocket", oEvent.getParameter("newValue").toUpperCase());
 		}
 	});
 });
