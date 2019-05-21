@@ -44,7 +44,8 @@
 										valueState="{= !${viewModel>/changeDelivery/newDeliveryDocket} ? 'Error' : 'None' }"
 										valueStateText="Enter a delivery docket"
 										liveChange="forceNewDeliveryDocketUpperCase"
-										valueLiveUpdate="false"/>
+										valueLiveUpdate="false"
+										maxLength="16"/>
 							</form:FormElement>
 						</form:formElements>
 					</form:FormContainer>

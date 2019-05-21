@@ -317,7 +317,11 @@ sap.ui.define([
 						that.closeChangeDeliveryDocketDialog();
 						this._setBusy(false);
 						MessageToast.show("Delivery docket updated");
+					} else {
+						this._setBusy(false);
+						this._oODataModel.resetChanges();
 					}
+					
 				},
 				error: this._handleSimpleODataError.bind(this)
 			});
