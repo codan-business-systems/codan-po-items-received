@@ -26,7 +26,6 @@
 							<Column id="colDeliveryDocket">
 								<Text text="Delivery Docket"/>
 							</Column>
-							<Column id="colChange"/>
 							<Column id="colSupplier" width="15%">
 								<Text text="Supplier"/>
 							</Column>
