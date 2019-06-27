@@ -226,23 +226,23 @@ sap.ui.define([
 		},
 		
 		_loadSendEmailComponent() {
-            sap.ui.component({
-                name: "codan.zsendemail",
-                settings: {
-                	showButton: false // We provide our own button
-                },
-                componentData: {},
-                async: true,
-                manifestFirst: true  //deprecated from 1.49+
-                // manifest: true    //SAPUI5 >= 1.49
-            }).then(function (oComponent) {
-            	this._oSendEmail = oComponent;
-                // oComponent.attachSent(this.onEmailSent.bind(this));
-                // oComponent.attachCancelled(this.onEmailCancelled.bind(this));
-                this.byId("componentSendEmail").setComponent(oComponent);
-            }.bind(this)).catch(function(oError) {
-                jQuery.sap.log.error(oError);
-            });
+			sap.ui.component({
+				name: "codan.zsendemail",
+				settings: {
+					showButton: false // We provide our own button
+				},
+				componentData: {},
+				async: true,
+				manifestFirst: true  //deprecated from 1.49+
+				// manifest: true    //SAPUI5 >= 1.49
+			}).then(function (oComponent) {
+				this._oSendEmail = oComponent;
+				// oComponent.attachSent(this.onEmailSent.bind(this));
+				// oComponent.attachCancelled(this.onEmailCancelled.bind(this));
+				this.byId("componentSendEmail").setComponent(oComponent);
+			}.bind(this)).catch(function(oError) {
+				jQuery.sap.log.error(oError);
+			});
 		},
 		
 		_getEmailBodyForItem(oItemData) {
