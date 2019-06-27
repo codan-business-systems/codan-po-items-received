@@ -1,4 +1,5 @@
 jQuery.sap.registerModulePath("codan.z_ie11_polyfill", "/sap/bc/ui5_ui5/sap/z_ie11_polyfill");
+jQuery.sap.registerModulePath("codan.zsendemail", "/sap/bc/ui5_ui5/sap/z_send_email");
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",

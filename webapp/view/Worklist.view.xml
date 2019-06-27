@@ -12,6 +12,8 @@
 								<Title visible="{= ${viewModel>/selectedCount} > 0 }" text="{viewModel>/selectedCount} docket(s) selected"/>
 								<Button visible="{= ${viewModel>/selectedCount} > 0 }" tooltip="{i18n>clearSelection}" press="clearSelections" icon="sap-icon://decline"/>
 								<Button press="openChangeDeliveryDocketDialog" visible="{= ${viewModel>/selectedCount} === 1 }" icon="sap-icon://edit" tooltip="Change Delivery Docket"/>
+								<Button visible="{= ${viewModel>/selectedCount} > 0 }" tooltip="{i18n>sendEmailForSelected}" press="sendSelectedItemsEmail"
+									icon="sap-icon://email"/>
 								<Button visible="{= ${viewModel>/selectedCount} > 0 }" tooltip="{i18n>deleteSelected}" press="confirmDeleteSelectedItems" type="Reject"
 									icon="sap-icon://delete"/>
 								<ToolbarSpacer/>
@@ -76,6 +78,7 @@
 							</ColumnListItem>
 						</items>
 					</Table>
+					<core:ComponentContainer id="componentSendEmail"/>
 				</content>
 				<dependents>
 					<core:Fragment fragmentName="codan.zpoitemsreceived.fragments.SearchSettings" type="XML"/>
