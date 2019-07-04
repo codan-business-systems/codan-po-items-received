@@ -19,6 +19,7 @@ sap.ui.define([
 			// Get reference to ODataModel
 			this._oODataModel = this.getOwnerComponent().getModel();
 			this._oODataModel.setUseBatch(true);
+			this._oODataModel.setSizeLimit(10000);
 
 			// View model for view state
 			this._oViewModel = new JSONModel({
@@ -64,7 +65,8 @@ sap.ui.define([
 					purchaseOrder: "",
 					oldDeliveryDocket: "",
 					newDeliveryDocket: ""
-				}
+				},
+				urgentBoardOnly: false
 			});
 			this.getView().setModel(this._oViewModel, "viewModel");
 			
@@ -136,9 +138,18 @@ sap.ui.define([
 
 			var aSearchFields = this._oViewModel.getProperty("/search/fields");
 			var sSearchValue = this._oViewModel.getProperty("/search/value");
+			var bUrgentBoardOnly = this._oViewModel.getProperty("/urgentBoardOnly");
 
 			// Build filters for each active search field
 			var aAllFilters = [];
+			
+			if (bUrgentBoardOnly) {
+				aAllFilters.push(new Filter({
+					path: "UrgentBoard",
+					operator: FilterOperator.EQ,
+					value1: bUrgentBoardOnly
+				}));
+			}
 			if (sSearchValue) {
 				var aFieldFilters = aSearchFields
 					.filter(oSearchField => oSearchField.searchSelected)
@@ -152,7 +163,7 @@ sap.ui.define([
 				if (!aFieldFilters.length) {
 					MessageBox.warning("Nothing will be found because no search fields have been selected");
 				}
-
+				
 				// Combine filters with OR statement not AND
 				var oCombinedFilter = new Filter({
 					filters: aFieldFilters,
@@ -160,7 +171,7 @@ sap.ui.define([
 				});
 				aAllFilters.push(oCombinedFilter);
 			}
-
+			
 			// Apply filter
 			var oTable = this._byId("worklist");
 			var oBinding = oTable.getBinding("items");
@@ -410,6 +421,11 @@ sap.ui.define([
 		
 		forceNewDeliveryDocketUpperCase(oEvent) {
 			this._oViewModel.setProperty("/changeDelivery/newDeliveryDocket", oEvent.getParameter("newValue").toUpperCase());
+		},
+		
+		onUrgentBoardOnlyChange(oEvent) {
+			// Filter the worklist according to the new value of the urgent board flag.
+			
 		}
 	});
 });
