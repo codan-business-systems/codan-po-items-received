@@ -13,6 +13,7 @@ sap.ui.define([
 
 	return Controller.extend("codan.zpoitemsreceived.controller.Worklist", {
 		formatters,
+		_oSendEmail: null, // Send email reuse component
 
 		onInit() {
 			// Get reference to ODataModel
@@ -66,6 +67,8 @@ sap.ui.define([
 				}
 			});
 			this.getView().setModel(this._oViewModel, "viewModel");
+			
+			this._loadSendEmailComponent();
 		},
 
 		createGroupHeader(oGroup) {
@@ -185,6 +188,84 @@ sap.ui.define([
 				oPopover.openBy(oEvent.getSource());
 			}
 		},
+		
+		sendSelectedItemsEmail(aSelectedItems) {
+			const oTable = this._byId("worklist");
+			// aSelectedItems may be an event, so check if it is a managed object and ignore if so
+			const oSelectedItems = aSelectedItems.getMetadata ? oTable.getSelectedItems() : aSelectedItems;
+
+			// Get item data for selected items
+			const aItemData = oSelectedItems
+				.map(oTableItem => oTableItem.getBindingContextPath())
+				.map(sPath => this._oODataModel.getProperty(sPath));
+
+			// Build email content
+			const sItemSeparator = "\r\n***********************************************************************\r\n";
+			let sBody = aItemData
+				.map(oItemData => this._getEmailBodyForItem(oItemData))
+				.join(sItemSeparator);
+			sBody = `${sItemSeparator}${sBody}${sItemSeparator}`;
+			
+			// Get single supplier (if there is only one)
+			let sSingleSupplierName = aItemData[0].SupplierName;
+			const oDifferentSupplier = aItemData.find(oItem => oItem.SupplierName !== sSingleSupplierName);
+			if (oDifferentSupplier) {
+				sSingleSupplierName = "";
+			}
+				
+			// Build subject
+			const sSubject = sSingleSupplierName
+				? `Delivery received from ${sSingleSupplierName}`
+				: "Multiple Deliveries";
+
+			// Set properties and open send email dialog
+			this._oSendEmail.setRecipients("");
+			this._oSendEmail.setSubject(sSubject);
+			this._oSendEmail.setBodyText(sBody);
+			this._oSendEmail.showDialog();
+		},
+		
+		_loadSendEmailComponent() {
+			sap.ui.component({
+				name: "codan.zsendemail",
+				settings: {
+					showButton: false // We provide our own button
+				},
+				componentData: {},
+				async: true,
+				manifestFirst: true  //deprecated from 1.49+
+				// manifest: true    //SAPUI5 >= 1.49
+			}).then(function (oComponent) {
+				this._oSendEmail = oComponent;
+				// oComponent.attachSent(this.onEmailSent.bind(this));
+				// oComponent.attachCancelled(this.onEmailCancelled.bind(this));
+				this.byId("componentSendEmail").setComponent(oComponent);
+			}.bind(this)).catch(function(oError) {
+				jQuery.sap.log.error(oError);
+			});
+		},
+		
+		_getEmailBodyForItem(oItemData) {
+			// Replace undefined values in oItemData with "" into oData
+			const oData = {};
+			Object.entries(oItemData)
+				.forEach(([key, value]) => {
+					if (value) {
+						oData[key] = value;
+					} else {
+						oData[key] = "";
+					}
+				});
+
+			const aLines = [
+				`Material:  ${oData.PartNumber} (${oData.Description})`,
+				`Quantity received: ${oData.QuantityReceived} ${oData.UnitOfMeasure}`,
+				`Purchase order:  ${oData.OrderNumber} / ${oData.ItemNumber}`,
+				`Supplier:  ${oData.SupplierName} (${oData.SupplierId})`
+			];
+			return aLines.join("\r\n");
+		},
+
 		
 		_deleteSelectedItems(aSelectedItems) {
 			
